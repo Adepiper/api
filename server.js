@@ -4,8 +4,8 @@ const express = require('express'),
   cors = require('cors'),
   mongoose = require('mongoose'),
   config = require('./db'),
-  userRoutes = require('./user/user.route'),
-  routes = require('./index.route')
+  userRoutes = require('./user/user.route')
+ 
 
 mongoose.Promise = global.Promise;
 
@@ -13,7 +13,8 @@ const app = express();
 let port = process.env.port || 3000;
 app.use(bodyParser.json());
 app.use(cors());
-app.use('/', routes);
+
+app.use('/', require('./index.route'));
 app.use('/user', userRoutes);
 require('./user/passport');
 
