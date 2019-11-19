@@ -16,14 +16,6 @@ app.use(cors());
 
 require('./user/passport');
 
-app.use(
-    session({
-      secret: 'secret',
-      resave: true,
-      saveUninitialize: true
-    })
-)
-
 
 app.set('view engine', 'ejs');
 app.use('/public', express.static('public'))
