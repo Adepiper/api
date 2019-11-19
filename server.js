@@ -5,20 +5,24 @@ const express = require('express'),
   mongoose = require('mongoose'),
   config = require('./db'),
   userRoutes = require('./user/user.route')
-  routes = require('./index.route');
+  routes = require('./index.route'),
+  session = require('express-session')
  
-
 mongoose.Promise = global.Promise;
-
 const app = express();
 let port = process.env.port || 3000;
 app.use(bodyParser.json());
 app.use(cors());
 
-app.use('/', routes);
-app.use('/user', userRoutes);
 require('./user/passport');
 
+app.use(
+    session({
+      secret: 'secret',
+      resave: true,
+      saveUninitialize: true
+    })
+)
 
 
 app.set('view engine', 'ejs');
@@ -36,6 +40,9 @@ app.use((err, req, res, next) => {
     }
   })
 })
+
+app.use('/', routes);
+app.use('/user', userRoutes);
 
 mongoose.connect(config.DB, { useNewUrlParser: true }).then(
   () => {
