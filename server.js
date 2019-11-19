@@ -33,6 +33,17 @@ app.use((err, req, res, next) => {
   })
 })
 
+app.use('/user', (req, res, next) => 
+{
+	res.setHeader('Content-Type', 'application/json');
+	res.setHeader('Access-Control-Allow-Origin', req.header('Origin') || '*');
+	res.setHeader('Access-Control-Allow-Headers', '*');
+	res.setHeader("Access-Control-Allow-Methods", "GET,PUT,POST,DELETE,OPTIONS,PATCH");
+	res.setHeader('Access-Control-Allow-Credentials', true);
+	res.status(200);
+	next();
+})
+
 app.use('/', routes);
 app.use('/user', userRoutes);
 
