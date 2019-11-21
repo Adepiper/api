@@ -7,7 +7,7 @@ const passport = require('passport');
 let User = require('./user');
 let Passport = require('./passport');
 
-userRoutes.post('/signup', (req, res) => {
+userRoutes.post('/signup', (req, res, next) => {
   console.log(req.body);
   // let user = new User(req.body);
 
@@ -27,7 +27,13 @@ userRoutes.post('/signup', (req, res) => {
 
         bycrpt.genSalt(10, (err, salt) => {
           bycrpt.hash(newUser.password, salt, (err, hash) => {
-            if (err) throw err;
+            if (err) {
+              console.log(err);
+              if (!err.statusCode) {
+                err.statusCode = 500;
+              }
+              return next(err);
+            }
 
             newUser.password = hash;
             newUser
@@ -36,12 +42,18 @@ userRoutes.post('/signup', (req, res) => {
                 // console.log(user);
                 return res.status(200).status('you can login');
               })
-              .catch(err => console.log(err));
+              .catch(err => {
+                console.log(err);
+                if (!err.statusCode) {
+                  err.statusCode = 500;
+                }
+                next(err);
+              });
           });
         });
       }
     })
-    .catch();
+    .catch(err => console.log(err));
 });
 
 userRoutes.post('/login', (req, res, next) => {
@@ -67,9 +79,9 @@ userRoutes.post('/login', (req, res, next) => {
   // res.status(401).json({ message: 'email or password incorrect' });
 });
 
-userRoutes.get('/logout', async function (req, res) {
- await req.logout();
- res.status(200).json({message: "logged out successfully"})
-})
+userRoutes.get('/logout', async function(req, res) {
+  await req.logout();
+  res.status(200).json({ message: 'logged out successfully' });
+});
 
 module.exports = userRoutes;
